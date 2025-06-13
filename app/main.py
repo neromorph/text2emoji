@@ -35,7 +35,7 @@ def predict():
         "emoji": emoji
     })
 
-@app.route('/', methods=['GET'])
+@app.route('/health', methods=['GET'])
 def home():
     return "Text-to-Emoji Prediction API is running."
 
