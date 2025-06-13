@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: text2emoji-app
-        image: LOCATION-docker.pkg.dev/PROJECT_ID/REPO_NAME/text2emoji:TAG
+        image: us-central1-docker.pkg.dev/iykra-aef2/iykra/text2emoji:latest
         ports:
         - containerPort: 5000
         resources:
