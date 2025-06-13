@@ -1,7 +1,7 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}', './app']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/iykra-aef2/text2emoji:${SHORT_SHA}', '.']
 
   # Push the container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -12,15 +12,15 @@ steps:
     args:
       - 'set'
       - 'image'
-      - 'deployment/genai-model'
-      - 'genai-model=${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
+      - 'deployment/text2emoji-app'
+      - 'text2emoji-app=${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
 
 substitutions:
     _LOCATION: us-central1
-    _REPOSITORY: iykra
+    _REPOSITORY: iykra-aef2
     _IMAGE_NAME: text2emoji
     _ZONE: us-central1-a
     _CLUSTER_NAME: iykra-cluster
