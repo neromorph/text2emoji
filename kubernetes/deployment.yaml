@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text2emoji-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: text2emoji-app
+  template:
+    metadata:
+      labels:
+        app: text2emoji-app
+    spec:
+      containers:
+      - name: text2emoji-app
+        image: LOCATION-docker.pkg.dev/PROJECT_ID/REPO_NAME/text2emoji-app:TAG
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 60
+          periodSeconds: 15
