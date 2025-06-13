@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: text2emoji-service
+spec:
+  selector:
+    app: text2emoji-app
+  ports:
+  - port: 80
+    targetPort: 5000
+  type: LoadBalancer

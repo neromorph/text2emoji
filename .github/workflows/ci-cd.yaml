@@ -1,0 +1,98 @@
+name: 'CI/CD Pipeline'
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.12.2
+
+    - name: Setup Google Cloud SDK
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Terraform Init
+      run: |
+        terraform init \
+          -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+          -backend-config="prefix=terraform/state"
+
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+
+  build-deploy:
+    name: 'Build and Deploy'
+    needs: terraform
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Google Cloud SDK
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Trigger Cloud Build
+      run: |
+        gcloud builds submit --config=cloudbuild.yaml \
+          --substitutions=_ZONE=us-central1-a,_CLUSTER_NAME=iykra-cluster
+
+    - name: Get External IP
+      run: |
+        gcloud container clusters get-credentials iykra-cluster --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
+        echo "Waiting for Load Balancer to be provisioned..."
+        # Wait for the service to get an external IP
+        external_ip=""
+        while [ -z $external_ip ]; do
+          echo "Waiting for external IP..."
+          external_ip=$(kubectl get service text2emoji-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          [ -z "$external_ip" ] && sleep 10
+        done
+        echo "Service is now available at: http://$external_ip"
+        echo "EXTERNAL_IP=$external_ip" >> $GITHUB_ENV
+        
+    - name: Post Deployment Summary
+      run: |
+        echo "::notice::Deployment Completed Successfully!"
+        echo "::notice::Application URL: http://${{ env.EXTERNAL_IP }}"
