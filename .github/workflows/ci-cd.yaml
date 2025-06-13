@@ -73,6 +73,17 @@ jobs:
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+    - name: 'Setup kubectl'
+      run: |
+        gcloud components install kubectl
+        gcloud container clusters get-credentials iykra-cluster --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
+        
+    # Add these steps to apply your Kubernetes manifests before Cloud Build
+    - name: 'Apply Kubernetes Manifests'
+      run: |
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/service.yaml
+
     - name: Trigger Cloud Build
       run: |
         gcloud builds submit --config=cloudbuild.yaml \
