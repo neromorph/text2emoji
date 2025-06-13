@@ -96,7 +96,7 @@ jobs:
         external_ip=""
         while [ -z $external_ip ]; do
           echo "Waiting for external IP..."
-          external_ip=$(kubectl get service text2emoji-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          external_ip=$(kubectl get service text2emoji-service -n iykra -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           [ -z "$external_ip" ] && sleep 10
         done
         echo "Service is now available at: http://$external_ip"
