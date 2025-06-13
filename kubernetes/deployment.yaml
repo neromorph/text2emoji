@@ -4,7 +4,7 @@ metadata:
   name: text2emoji-app
   namespace: iykra
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: text2emoji-app
