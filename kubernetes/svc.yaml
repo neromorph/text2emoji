@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: text2emoji-service
+  namespace: iykra
 spec:
   selector:
     app: text2emoji-app

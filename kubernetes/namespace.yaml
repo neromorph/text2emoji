@@ -1,0 +1,6 @@
+apiVersion: apps/v1
+kind: Namespace
+metadata:
+  name: iykra
+  labels:
+    name: iykra
