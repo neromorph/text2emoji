@@ -27,5 +27,6 @@ substitutions:
 
 images:
   - '${_LOCATION}-docker.pkg.dev/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
+  - '${_LOCATION}-docker.pkg.dev/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
 
 timeout: 1800s
