@@ -1,11 +1,11 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/iykra-aef2/text2emoji:${SHORT_SHA}', '.']
+    args: ['build', '-t', '${_LOCATION}-docker.pkg.dev/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}', '.']
 
   # Push the container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}']
+    args: ['push', '${_LOCATION}-docker.pkg.dev/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}']
 
   # Deploy to GKE
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -13,7 +13,7 @@ steps:
       - 'set'
       - 'image'
       - 'deployment/text2emoji-app'
-      - 'text2emoji-app=${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
+      - 'text2emoji-app=${_LOCATION}-docker.pkg.dev/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
@@ -26,6 +26,6 @@ substitutions:
     _CLUSTER_NAME: iykra-cluster
 
 images:
-  - '${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
+  - '${_LOCATION}-docker.pkg.dev/${_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}'
 
 timeout: 1800s
