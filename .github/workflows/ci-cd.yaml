@@ -96,7 +96,6 @@ jobs:
 
     - name: Get External IP
       run: |
-        gcloud container clusters get-credentials iykra-cluster --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
         echo "Waiting for Load Balancer to be provisioned..."
         # Wait for the service to get an external IP
         external_ip=""
