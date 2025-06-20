@@ -83,12 +83,12 @@ jobs:
     - name: Trigger Cloud Build
       run: |
         gcloud builds submit --config=cloudbuild.yaml \
-          --substitutions=_IMAGE_TAG=$GITHUB_SHA
+          --substitutions=_IMAGE_TAG=${GITHUB_SHA}
         
     # Add these steps to apply your Kubernetes manifests before Cloud Build
     - name: 'Apply Kubernetes Manifests'
       run: |
-        sed -i "s|image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/iykra/text2emoji:.*|image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/iykra/text2emoji:$GITHUB_SHA|g" kubernetes/*.yaml
+        sed -i "s|image: us-central1-docker.pkg.dev/iykra-aef2/iykra/text2emoji:.*|image: us-central1-docker.pkg.dev/iykra-aef2/iykra/text2emoji:${GITHUB_SHA}|g" kubernetes/*.yaml
         kubectl apply -f kubernetes/
 
     - name: Get External IP
