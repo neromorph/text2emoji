@@ -37,7 +37,7 @@ def predict():
 
 @app.route('/health', methods=['GET'])
 def home():
-    return "Text-to-Emoji Prediction API is running."
+    return "Text-to-Emoji Prediction API is running!"
 
 if __name__ == '__main__':
     app.run(debug=True)
