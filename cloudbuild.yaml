@@ -1,23 +1,11 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID', '.']
+    args: ['build', '-t', '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$GITHUB_SHA', '.']
 
   # Push the container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID']
-
-  # Deploy to GKE
-  # - name: 'gcr.io/cloud-builders/kubectl'
-  #   args:
-  #     - 'set'
-  #     - 'image'
-  #     - 'deployment/text2emoji-app'
-  #     - 'text2emoji-app=${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID'
-  #     - '--namespace=iykra'
-  #   env:
-  #     - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
-  #     - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
+    args: ['push', '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$GITHUB_SHA']
 
 substitutions:
     _LOCATION: us-central1
@@ -26,7 +14,7 @@ substitutions:
     _IMAGE_NAME: text2emoji
 
 images:
-  - '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID'
+  - '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$GITHUB_SHA'
 
 
 timeout: 1800s
