@@ -24,8 +24,6 @@ substitutions:
     _PROJECT_ID: iykra-aef2
     _REPOSITORY: iykra
     _IMAGE_NAME: text2emoji
-    # _ZONE: us-central1-a
-    # _CLUSTER_NAME: iykra-cluster
 
 images:
   - '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID'
