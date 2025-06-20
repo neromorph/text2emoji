@@ -73,20 +73,27 @@ jobs:
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-    - name: 'Setup kubectl'
-      run: |
-        gcloud components install kubectl
-        gcloud container clusters get-credentials iykra-cluster --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
-        
-    # Add these steps to apply your Kubernetes manifests before Cloud Build
-    - name: 'Apply Kubernetes Manifests'
-      run: |
-        kubectl apply -f kubernetes/
+    # - name: 'Setup kubectl'
+    #   run: |
+    #     gcloud components install kubectl
+    #     gcloud container clusters get-credentials iykra-cluster --zone us-central1-a --project ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: 'Get GKE Credentials'
+      uses: 'google-github-actions/get-gke-credentials@v1'
+      with:
+        cluster_name: 'iykra-cluster'
+        location: 'us-central1-a'
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
 
     - name: Trigger Cloud Build
       run: |
         gcloud builds submit --config=cloudbuild.yaml \
           --substitutions=_ZONE=us-central1-a,_CLUSTER_NAME=iykra-cluster
+        
+    # Add these steps to apply your Kubernetes manifests before Cloud Build
+    - name: 'Apply Kubernetes Manifests'
+      run: |
+        kubectl apply -f kubernetes/
 
     - name: Get External IP
       run: |

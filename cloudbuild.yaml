@@ -8,16 +8,16 @@ steps:
     args: ['push', '${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID']
 
   # Deploy to GKE
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - 'set'
-      - 'image'
-      - 'deployment/text2emoji-app'
-      - 'text2emoji-app=${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID'
-      - '--namespace=iykra'
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
+  # - name: 'gcr.io/cloud-builders/kubectl'
+  #   args:
+  #     - 'set'
+  #     - 'image'
+  #     - 'deployment/text2emoji-app'
+  #     - 'text2emoji-app=${_LOCATION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$BUILD_ID'
+  #     - '--namespace=iykra'
+  #   env:
+  #     - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  #     - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}'
 
 substitutions:
     _LOCATION: us-central1
